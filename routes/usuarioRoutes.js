@@ -13,11 +13,10 @@ import
 import { validarCreacionUsuario, validarActualizacionUsuario,validarCambioEstado } from "../validators/usuarioValidator.js";
 
 const router= Router();
-
-router.post('/', validarCreacionUsuario, postUsuario);
 router.get('/', getUsuarios);
 router.get('/:id' ,getUsuario);
+router.post('/', validarCreacionUsuario, postUsuario);
 router.put('/:id', validarActualizacionUsuario, putUsuario);
-router.delete('/:id', deleteUsuario);
 router.patch('/:id/estado', validarCambioEstado ,patchEstado)
+router.delete('/:id', deleteUsuario);
 export default router;

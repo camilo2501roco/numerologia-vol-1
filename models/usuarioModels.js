@@ -108,3 +108,19 @@ export async function eliminarUsuario(id) {
   const [result] = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
   return result.affectedRows > 0;
 }
+
+
+
+
+
+
+
+
+export async function actualizarEstadoPorUusuario(id,estado) {
+  const [result] = await pool.query(    'UPDATE usuarios SET estado = ? WHERE id = ?',
+
+[estado,id]
+
+  );
+  return result.affectedRows > 0;
+}
