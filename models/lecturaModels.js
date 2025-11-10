@@ -1,0 +1,208 @@
+import pool from "../config/database.js";
+
+
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const model =genAI.getGenerativeModel({model:"gemini-2.5-flash"});
+
+
+
+
+
+async function generarContenidoIA(tipo,fecha_nacimiento) {
+    
+let prompt;
+if(tipo ==='principal'){
+    prompt= `Eres un experto numerólogo. Genera una lectura numerológica 
+    completa y personalizada basada en la siguiente fecha de nacimiento: ${fecha_nacimiento}.
+    
+    
+    incluye:
+    1. Cálculo del número de vida (suma reducida de todos los dígitos de la fecha hasta obtener un solo dígito)
+    2. Significado profundo de ese número de vida
+    3. Fortalezas y talentos naturales
+    4. Desafíos a superar
+    5. Propósito de vida
+    6. Consejo personalizado
+    La lectura debe ser profunda, motivadora y en español. Extensión: 300-400 palabras.
+    `;
+}else{
+    //diaria
+const fechaActual = new Date().toLocaleDateString('es-ES',{
+    weekday:'long',
+    year:'numeric',
+    month:'long',
+    day:'numeric'
+});
+prompt =`
+Eres un experto numerólogo. Genera una lectura numerológica
+ diaria para una persona nacida el ${fecha_nacimiento}, para el día de hoy: ${fechaActual}.
+
+Incluye:
+1. Energía del día según su número personal
+2. Oportunidades que se presentan hoy
+3. Precauciones o desafíos a tener en cuenta
+4. Consejo práctico del día
+5. Número de la suerte para hoy
+
+La lectura debe ser motivadora, práctica y en español. Extensión: 150-200 palabras.`;
+
+
+
+
+
+
+}
+
+    try {
+        console.log('📝 Generando contenido tipo:', tipo);
+        
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        const texto = response.text();
+        
+        console.log('✅ Contenido generado exitosamente');
+        return texto;
+        
+    } catch (error) {
+        console.error('❌ Error de Gemini:', error.message);
+        throw new Error('No se pudo generar la lectura con IA: ' + error.message);
+    }
+
+
+}
+
+
+
+
+class LecturaYaExisteError extends Error {
+    constructor(mensaje){
+        super(mensaje);
+        this.name = 'LecturaYaExisteError'
+    }
+}
+
+
+
+
+// crear lectura principal
+
+
+ export async function crearLecturaPrincipal(usuario_id,fecha_nacimiento) {
+
+
+    // verifiacion si ya existe una lectura principal
+   const [existe] = await pool.query(`
+    SELECT id FROM lecturas WHERE usuario_id = ? AND tipo = "principal"`,
+    [usuario_id]
+
+);
+
+
+if(existe.length > 0){
+    throw new LecturaYaExisteError("Este usuario ya tiene generada una lectura principal");
+    
+
+}
+
+
+const contenido = await generarContenidoIA('principal',fecha_nacimiento);
+
+
+const [result] = await pool.query(`
+    
+    INSERT INTO lecturas (usuario_id, tipo, contenido) VALUES (?, ?, ?)
+    `,
+[usuario_id,'principal', contenido]
+);
+    
+
+
+
+return {
+    id:result.insertId,
+    usuario_id,
+    tipo:'principal',
+    contenido,
+    fecha_lectura: new Date()
+};
+
+
+
+
+}
+
+
+export { LecturaYaExisteError };
+
+
+
+export async function crearLecturaDiaria(usuario_id, fecha_nacimiento) {
+
+    const contenido = await generarContenidoIA('diaria', fecha_nacimiento);
+    
+   
+    const [result] = await pool.query(
+        'INSERT INTO lecturas (usuario_id, tipo, contenido) VALUES (?, ?, ?)',
+        [usuario_id, 'diaria', contenido]
+    );
+    
+    return {
+        id: result.insertId,
+        usuario_id,
+        tipo: 'diaria',
+        contenido,
+        fecha_lectura: new Date()
+    };
+}
+
+
+
+
+
+export async function obtenerLecturasPorUsuario(usuario_id) {
+    
+
+
+    const [rows] = await pool.query(`
+        SELECT 
+            id,
+            usuario_id,
+            tipo,
+            contenido,
+            fecha_lectura
+        FROM lecturas
+        WHERE usuario_id = ?
+        ORDER BY fecha_lectura DESC`,
+    [usuario_id]
+);
+return rows;
+
+}
+
+
+
+export async function obtenerlecturaPorId(id) {
+    
+
+    const [rows] = await pool.query(`
+        
+        SELECT 
+            l.id,
+            l.usuario_id,
+            l.tipo,
+            l.contenido,
+            l.fecha_lectura,
+            u.nombre,
+            u.email
+        FROM lecturas l
+        INNER JOIN usuarios u ON l.usuario_id = u.id
+        WHERE l.id = ?`,
+    [id]
+);
+
+return rows[0];
+}

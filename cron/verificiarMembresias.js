@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import pool from '../config/database.js';
 
-export function iniciarTareaVerificacionMembresisas() {
+export function iniciarTareaVerificacionMembresias() {
     
     cron.schedule('1 0 * * *', async () => {
         console.log('🔄 Ejecutando verificación de membresías vencidas...');
