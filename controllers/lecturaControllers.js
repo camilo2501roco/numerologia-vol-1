@@ -18,6 +18,13 @@ export async function postLecturaPrincipal(req,res) {
         if(!usuario) return res.status(404).json({error:'usuario no encontrado'});
 
 
+if(usuario.estado !== 'activo'){
+
+    return res.status(403).json({ 
+                error: 'Usuario inactivo',
+                mensaje: 'Debes tener una membresía activa para generar lecturas diarias'
+            });
+}
 
 
         const lectura = await crearLecturaPrincipal(usuario_id, usuario.fecha_nacimiento);
@@ -37,6 +44,8 @@ export async function postLecturaPrincipal(req,res) {
                 mensaje: error.message
             });
         }
+
+
         res.status(500).json({ 
             error: 'Error al generar lectura principal',
             mensajeTecnico: error.message

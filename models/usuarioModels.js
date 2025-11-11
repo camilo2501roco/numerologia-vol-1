@@ -17,7 +17,7 @@ export async function crearUsuario({nombre,email,fecha_nacimiento}){
         [nombre,email,fecha_nacimiento]
     );
  console.log('Resultado SQL:', result);
-    // Corregir aquí: 'inserId' debe ser 'insertId'
+    
     return {id:result.insertId,nombre,email,fecha_nacimiento}; 
 };
 

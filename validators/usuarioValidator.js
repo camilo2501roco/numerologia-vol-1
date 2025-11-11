@@ -10,10 +10,21 @@ export const validarCreacionUsuario = [
 
   body('email')
     .notEmpty().withMessage('El email es obligatorio')
-    .isEmail().withMessage('Debe ser un email válido'),
+    .isEmail().withMessage('Debe ser un email válido')
+    .custom(async (email) => {
+      const yaExiste = await existeEmail(email);
+      if (yaExiste) {
+        throw new Error('El email ya está registrado');
+      }
+    }),
+
 
 body('fecha_nacimiento')
-.notEmpty().withMessage('la fecha es obligatoria ej : 2005-05-25'),
+ .notEmpty().withMessage('La fecha de nacimiento es obligatoria')
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('La fecha debe tener el formato YYYY-MM-DD (ejemplo: 2005-05-25)')
+    .isDate({ format: 'YYYY-MM-DD' })
+    .withMessage('Debe ser una fecha válida en formato YYYY-MM-DD'),
 
     
   validarCampos 
