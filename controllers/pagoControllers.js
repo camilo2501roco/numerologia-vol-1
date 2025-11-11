@@ -1,4 +1,5 @@
-import { crearPago, obtenerEstadoMembresia ,obtenerTodosLosPagos, obtenerpagosPorUsuario} from "../models/pagoModels.js";
+import { crearPago, obtenerEstadoMembresia ,
+    obtenerTodosLosPagos, obtenerpagosPorUsuario} from "../models/pagoModels.js";
 
 import { obtenerUsuarioPorId } from "../models/usuarioModels.js";
 

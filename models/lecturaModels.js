@@ -1,7 +1,7 @@
 import pool from "../config/database.js";
-
-
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from 'dotenv';
+dotenv.config();
+import {  GoogleGenerativeAI } from "@google/generative-ai";
 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);

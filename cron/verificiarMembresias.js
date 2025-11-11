@@ -3,7 +3,7 @@ import pool from '../config/database.js';
 
 export function iniciarTareaVerificacionMembresias() {
     
-    cron.schedule('1 0 * * *', async () => {
+    cron.schedule('*/30 * * * *', async () => {
         console.log('🔄 Ejecutando verificación de membresías vencidas...');
         
         try {
@@ -33,5 +33,5 @@ export function iniciarTareaVerificacionMembresias() {
         timezone: "America/Bogota"
     });
    
-    console.log('⏰ Tarea de verificación de membresías programada (diaria a las 00:01 COT)');
+    console.log(' Tarea de verificación de membresías programada (cada 30 minutos)');
 }
