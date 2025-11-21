@@ -7,7 +7,7 @@ export function iniciarTareaVerificacionMembresias() {
         console.log('🔄 Ejecutando verificación de membresías vencidas...');
         
         try {
-            // Actualizar usuarios cuya membresía haya vencido
+            
             const [result] = await pool.query(`
                 UPDATE usuarios u
                 INNER JOIN (

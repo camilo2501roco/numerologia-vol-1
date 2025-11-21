@@ -1,7 +1,7 @@
 import express from 'express'
 import 'dotenv/config' 
 import usuarioRoutes from './routes/usuarioRoutes.js';
-import pagoRoutes from './routes/pagoRutas.js'
+import pagoRoutes from './routes/pagoRoutes.js'
 import lecturaRoutes from './routes/lecturaRoutes.js';
 import { iniciarTareaVerificacionMembresias } from './cron/verificiarMembresias.js';
 
@@ -15,4 +15,4 @@ app.use('/api/lecturas', lecturaRoutes);
 
 
 iniciarTareaVerificacionMembresias()
-app.listen(process.env.PORT, () => console.log(`Servidor corriendo en http://localhost:${process.env.PORT}`));
+app.listen(process.env.PORT   || 3000, () => console.log(`Servidor corriendo en http://localhost:${process.env.PORT}`));

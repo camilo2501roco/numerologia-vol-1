@@ -1,0 +1,177 @@
+                                   DOCUMENTACION DE LA API 
+
+
+
+
+Introduccion: 
+ Esta API se basa en un sistema de servicio de numerologia, este sistema se complementa
+  de 3 estructuras : 
+  1.el registro y manejo de usuarios 
+  2.el registro y manejo de pagos para acceder al servicio de numerologia
+  3. la generacion de lecturas de numerologia ( el servicio final)
+
+
+  
+
+  Enpoints//
+
+  usuarios: 
+
+
+  --- POST http://localhost:3000/api/usuarios :
+
+para una respuesta 200 los parametros deben ser validos, nombre, correo unico
+ y fecha de nacimiento valida en formato YYY-MM-DD 
+ 
+ si algun campo esta vacio la respuesta sera un 404 con su respectivo mensaje
+ si el correo ya esta registrado la respuesta sera un 404 con su respectivo mensaje
+ y si la fecha es diferente al formato YYY-MM-DD sera un 404 con su respectivo mensaje
+
+al momento de ser postivo el registro de respuesta retornan los datos junto al ID asignado al usuarios
+
+
+
+
+
+--- GET  http://localhost:3000/api/usuarios/25 :
+
+el id asignado al usuario debe ir en el endpoint como parametro
+
+para una respuesta 200 el usuario debe existir de ser lo contrario retorna 404 con un mensaje al respectivo
+
+el retorno de la respuesta 200 son los datos de registro , id asigando,  estado del usuario y fecha re gsitro
+
+el estado al momento de  registrar usuario automaticamente es inactivo asi que para actualizar 
+el usuario debe acceder a membresia para pasar a  activo 
+
+
+
+---- GET http://localhost:3000/api/usuarios :
+
+
+Este enpoint muestra en respuesta 200 todos los usuarios creados con sus datos de registro igual que el anterior endpoint
+debe existir almenos 1 de l contrario sera un 404 como respuesta
+
+
+
+
+
+----- PUT http://localhost:3000/api/usuarios/25 :
+
+
+
+Con este endpoint se actualiza el usuario
+
+
+(como  Route Parameter debe ir el ID de usuario )
+
+
+los Request Body para una respuesta 200 ok son los 3 datos de raiz del usuario
+nombre, correo y fecha son los 3 datos que se permiten actualizar 
+
+si  un campo  esta vacio vendra como respuesta un 404 indicando el campo vacio 
+
+si el correo ya existe en otro usuario vendra como respuesta un 404 
+
+al momento de actualizar retorna los datos actualizados junto id, estado y fecha de registro
+
+
+
+
+----------- PATCH http://localhost:3000/api/usuarios/25/estado :
+
+con este endpoint podremos cambiar el estado de registro del usuario manualmente
+
+
+
+Observacion del endpoint: Implementar este endpoint en realidad complica  la logica de negocio 
+ya que el estado debe depender de la membresia, membresia que depende del tiempo. 
+
+ejemplo: si se crea usuario y se actualiza el cambio de estado a activo por medio del patch este me permite 
+recibir lecturas sin haber accedido a la membresia entonces en realidad despista el manejo de negocio.
+
+genera lecturas sin estar registrado por que con este patch el usuario se activa pero no se registra en pago
+lo cual genera confusion sin embargo se dejo como requerido de parte de los requerimientos y tambien como metodo 
+de prueba (puede mejorarse claramente luego)
+
+luego si el usuario si se registra y luego quiere cambiar el estado a inactivo manualmente el usuario se desactiva
+pero no se elimina la membresia es decir la membresia sigue corriendo hasta el dia 30 ( aqui el patch si puede 
+funcionar como metodo de bloquear servicio )
+
+
+
+(como  Route Parameter debe ir el ID de usuario )
+
+
+ El Request Body  seria el estado ( activo o inactivo)
+
+
+
+
+
+
+
+ DELETE  http://localhost:3000/api/usuarios/25
+
+
+ (como  Route Parameter debe ir el ID de usuario )
+
+
+
+
+
+PAGOS //
+
+
+POST http://localhost:3000/api/pagos :
+
+ este endpoint funciona para registrar un  pago 
+
+
+como  Request Body : id de usuario,monto y metodo de pago 
+
+el id debe existir
+el monto son 5000 es el monto fijo que permite crear el regsitro
+el metodo de pago debe ser tarjeta , efectivo o transferencia
+
+
+una vez creado el registro de pago inicia el conteo de tiempo por 30 dias 
+si se intenta registrar nuevamente pago con el mismo usuario enviara 404 por que
+ya existe un pago 
+
+
+
+GET  http://localhost:3000/api/pagos/estado/25 : 
+
+con este metodo se puede recibir una respuesta del estado del registro
+
+
+ (como  Route Parameter debe ir el ID de usuario )
+
+ la respuesta depende del registro de membresia si esta activa siempre sera activo el estado 
+
+
+
+ GET  http://localhost:3000/api/pagos :
+ 
+
+
+ con este metodo  se obtienen todos los registros de pagos cada pago con los datos de cada usuarios
+
+
+
+
+
+
+
+
+ http://localhost:3000/api/pagos/25 : 
+
+
+con este metodo se pueden obtener los registros de pago de un usuario en especifico 
+
+ (como  Route Parameter debe ir el ID de usuario )
+
+
+
+

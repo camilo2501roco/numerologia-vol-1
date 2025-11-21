@@ -30,7 +30,6 @@ if(tipo ==='principal'){
     La lectura debe ser profunda, motivadora y en español. Extensión: 300-400 palabras.
     `;
 }else{
-    //diaria
 const fechaActual = new Date().toLocaleDateString('es-ES',{
     weekday:'long',
     year:'numeric',
@@ -88,13 +87,12 @@ class LecturaYaExisteError extends Error {
 
 
 
-// crear lectura principal
 
 
  export async function crearLecturaPrincipal(usuario_id,fecha_nacimiento) {
 
 
-    // verifiacion si ya existe una lectura principal
+ 
    const [existe] = await pool.query(`
     SELECT id FROM lecturas WHERE usuario_id = ? AND tipo = "principal"`,
     [usuario_id]

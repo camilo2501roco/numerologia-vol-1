@@ -1,5 +1,5 @@
-import { body, param } from 'express-validator';
-// Asegúrate de que apunten bien:
+import { body } from 'express-validator';
+
 import { validarCampos } from './validateResults.js'; 
 import { existeEmail } from '../models/usuarioModels.js';
 
@@ -24,7 +24,7 @@ body('fecha_nacimiento')
     .matches(/^\d{4}-\d{2}-\d{2}$/)
     .withMessage('La fecha debe tener el formato YYYY-MM-DD (ejemplo: 2005-05-25)')
     .isDate({ format: 'YYYY-MM-DD' })
-    .withMessage('Debe ser una fecha válida en formato YYYY-MM-DD'),
+    .withMessage('Debe ser una fecha válida.'),
 
     
   validarCampos 

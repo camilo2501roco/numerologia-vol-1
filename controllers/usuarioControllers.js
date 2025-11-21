@@ -40,21 +40,26 @@ export async function getUsuario(req,res) {
     }
 }
 
-export async function putUsuario(req,res) {
+export async function putUsuario(req, res) {
+    try {
+        // ✅ Validación manual antes de procesar
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({
+                error: 'Datos incompletos',
+                mensaje: 'Se requiere al menos un campo para actualizar: nombre, email o fecha_nacimiento'
+            });
+        }
 
-  try {
-    const usuario = await obtenerUsuarioPorId(req.params.id);
-    if(!usuario) return res.status(404).json({error: 'usuario no encontrado'});
+        const usuario = await obtenerUsuarioPorId(req.params.id);
+        if(!usuario) return res.status(404).json({error: 'usuario no encontrado'});
 
-
-    const actualizado = await actualizarUsuario(req.params.id,req.body);
-    res.json(actualizado);
-  } catch (error) {
-     res.status(500).json({ error: 'Error al actualizar usuario' });
-  }
-  
+        const actualizado = await actualizarUsuario(req.params.id, req.body);
+        res.json(actualizado);
+        
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar usuario' });
+    }
 }
-
 
 
 export async function patchEstado(req,res) {

@@ -1,37 +1,42 @@
 import pool from '../config/database.js';
 
 import { actualizarEstadoPorUusuario } from './usuarioModels.js';
+export const MONTO_MEMBRESIA_MENSUAL = 5000;
 
-
-export async function crearPago({usuario_id,monto,metodo}) {
+export async function crearPago({usuario_id, monto, metodo}) {
     
-const fechaPago = new Date().toISOString().split('T')[0];
+    
+    const [pagosVigentes] = await pool.query(
+        `SELECT id FROM pagos 
+         WHERE usuario_id = ? AND fecha_vencimiento >= CURDATE()`,
+        [usuario_id]
+    );
 
-const fechaVencimientoDate = new Date();
+    if (pagosVigentes.length > 0) {
+        throw new Error('Ya tienes una membresía activa. Puedes renovar cuando venza la actual.');
+    }
 
-fechaVencimientoDate.setDate(fechaVencimientoDate.getDate() + 30);
+    const fechaPago = new Date().toISOString().split('T')[0];
+    const fechaVencimientoDate = new Date();
+    fechaVencimientoDate.setDate(fechaVencimientoDate.getDate() + 30);
+    const fechaVencimiento = fechaVencimientoDate.toISOString().split('T')[0];
 
-const fechaVencimiento =fechaVencimientoDate.toISOString().split('T')[0];
+    const [result] = await pool.query(
+        'INSERT INTO pagos (usuario_id, monto, fecha_pago, fecha_vencimiento, metodo) VALUES (?, ?, ?, ?, ?)',
+        [usuario_id, monto, fechaPago, fechaVencimiento, metodo]
+    );
 
+    await actualizarEstadoPorUusuario(usuario_id, 'activo');
 
-const [result] = await pool.query(
-   'INSERT INTO pagos (usuario_id, monto, fecha_pago, fecha_vencimiento, metodo) VALUES (?, ?, ?, ?, ?)',
-   [usuario_id,monto,fechaPago,fechaVencimiento,metodo]
-);
-
-await actualizarEstadoPorUusuario(usuario_id, 'activo');
-
-return{
-    id:result.insertId,
-    usuario_id,
-    monto,
-    fechaPago,
-    fechaVencimiento,
-    metodo
-};
-
+    return {
+        id: result.insertId,
+        usuario_id,
+        monto,
+        fechaPago,
+        fechaVencimiento,
+        metodo
+    };
 }
-
 
 export async function obtenerEstadoMembresia(usuario_id) {
     

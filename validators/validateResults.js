@@ -12,5 +12,5 @@ export const validarCampos = (req, res, next) => {
     });
   }
 
-  next(); // ← AGREGAR ESTA LÍNEA
+  next(); 
 };

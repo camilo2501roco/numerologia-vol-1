@@ -1,5 +1,5 @@
 import { crearPago, obtenerEstadoMembresia ,
-    obtenerTodosLosPagos, obtenerpagosPorUsuario} from "../models/pagoModels.js";
+    obtenerTodosLosPagos, obtenerpagosPorUsuario, MONTO_MEMBRESIA_MENSUAL} from "../models/pagoModels.js";
 
 import { obtenerUsuarioPorId } from "../models/usuarioModels.js";
 
@@ -7,37 +7,41 @@ import { obtenerUsuarioPorId } from "../models/usuarioModels.js";
 
 
 
-// registrar nuevo pago de membresia
-
-export async function  postPago(req,res) {
-    
 
 
-
+export async function postPago(req, res) {
     try {
-        const {usuario_id} =  req.body;
-         const usuario = await obtenerUsuarioPorId(usuario_id);
-         if(!usuario){
+        const {usuario_id} = req.body;
+        const usuario = await obtenerUsuarioPorId(usuario_id);
+        if(!usuario){
             return res.status(404).json({error:'usuario no encontrado'})
-         }
+        }
 
+       const datosPago = {
+            usuario_id,
+            monto: MONTO_MEMBRESIA_MENSUAL,
+            metodo
+        };
 
-
-
-const nuevoPago =await crearPago(req.body);
-res.status(201).json(nuevoPago)
-
+        const nuevoPago = await crearPago(datosPago);
+        res.status(201).json(nuevoPago)
     } catch (error) {
-          console.error('Error al crear pago:', error.message);
+        console.error('Error al crear pago:', error.message);
+        
+        
+        if (error.message.includes('Ya tienes una membresía activa')) {
+            return res.status(409).json({
+                error: 'Membresía activa',
+                mensaje: error.message
+            });
+        }
+        
         res.status(500).json({ 
             error: 'Error al crear pago',
             mensajeTecnico: error.message
         });
     }
 }
-
-
-
 
 
 
@@ -57,7 +61,7 @@ export async function getEstadoMembresia(req, res) {
             estado: estadoActivo ? 'activo' : 'inactivo'
         });
 
-    } catch (error) {  // 👈 EL CATCH DEBE ESTAR DENTRO DE LA FUNCIÓN
+    } catch (error) {
         console.error('Error al consultar estado de membresía:', error.message);
         res.status(500).json({ 
             error: 'Error al consultar estado de membresía',

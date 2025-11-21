@@ -22,7 +22,7 @@ if(usuario.estado !== 'activo'){
 
     return res.status(403).json({ 
                 error: 'Usuario inactivo',
-                mensaje: 'Debes tener una membresía activa para generar lecturas diarias'
+                mensaje: 'Debes tener una membresía activa para generar lecturas '
             });
 }
 
@@ -74,7 +74,7 @@ if(usuario.estado !== 'activo'){
 
     return res.status(403).json({ 
                 error: 'Usuario inactivo',
-                mensaje: 'Debes tener una membresía activa para generar lecturas diarias'
+                mensaje: 'Debes tener una membresía activa para generar lecturas dias'
             });
 }
 
