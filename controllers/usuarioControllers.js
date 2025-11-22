@@ -42,11 +42,11 @@ export async function getUsuario(req,res) {
 
 export async function putUsuario(req, res) {
     try {
-        // ✅ Validación manual antes de procesar
+        //
         if (Object.keys(req.body).length === 0) {
-            return res.status(400).json({
+            return res.status(404).json({
                 error: 'Datos incompletos',
-                mensaje: 'Se requiere al menos un campo para actualizar: nombre, email o fecha_nacimiento'
+                mensaje: 'Datos incompletos para actualizar deben estar los campos: nombre, email o fecha_nacimiento'
             });
         }
 

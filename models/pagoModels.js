@@ -1,7 +1,7 @@
-import pool from '../config/database.js';
+import pool from '../config/dataBase.js';
 
 import { actualizarEstadoPorUusuario } from './usuarioModels.js';
-export const MONTO_MEMBRESIA_MENSUAL = 5000;
+
 
 export async function crearPago({usuario_id, monto, metodo}) {
     

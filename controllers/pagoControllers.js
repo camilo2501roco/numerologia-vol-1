@@ -1,5 +1,5 @@
 import { crearPago, obtenerEstadoMembresia ,
-    obtenerTodosLosPagos, obtenerpagosPorUsuario, MONTO_MEMBRESIA_MENSUAL} from "../models/pagoModels.js";
+    obtenerTodosLosPagos, obtenerpagosPorUsuario} from "../models/pagoModels.js";
 
 import { obtenerUsuarioPorId } from "../models/usuarioModels.js";
 
@@ -17,14 +17,9 @@ export async function postPago(req, res) {
             return res.status(404).json({error:'usuario no encontrado'})
         }
 
-       const datosPago = {
-            usuario_id,
-            monto: MONTO_MEMBRESIA_MENSUAL,
-            metodo
-        };
-
-        const nuevoPago = await crearPago(datosPago);
+        const nuevoPago = await crearPago(req.body);
         res.status(201).json(nuevoPago)
+
     } catch (error) {
         console.error('Error al crear pago:', error.message);
         
@@ -58,7 +53,7 @@ export async function getEstadoMembresia(req, res) {
 
         return res.json({
             usuario_id: parseInt(usuario_id),
-            estado: estadoActivo ? 'activo' : 'inactivo'
+            estado_membresia: estadoActivo ? 'activo' : 'inactivo'
         });
 
     } catch (error) {

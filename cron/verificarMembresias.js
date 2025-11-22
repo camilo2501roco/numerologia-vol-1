@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import pool from '../config/database.js';
+import pool from '../config/dataBase.js';
 
 export function iniciarTareaVerificacionMembresias() {
     

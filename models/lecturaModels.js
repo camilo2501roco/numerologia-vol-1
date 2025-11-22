@@ -1,4 +1,4 @@
-import pool from "../config/database.js";
+import pool from "../config/dataBase.js";
 import dotenv from 'dotenv';
 dotenv.config();
 import {  GoogleGenerativeAI } from "@google/generative-ai";
@@ -121,8 +121,8 @@ const [result] = await pool.query(`
 
 
 return {
-    id:result.insertId,
-    usuario_id,
+       id_lectura: result.insertId,
+        
     tipo:'principal',
     contenido,
     fecha_lectura: new Date()
@@ -149,8 +149,8 @@ export async function crearLecturaDiaria(usuario_id, fecha_nacimiento) {
     );
     
     return {
-        id: result.insertId,
-        usuario_id,
+        id_lectura: result.insertId,
+        
         tipo: 'diaria',
         contenido,
         fecha_lectura: new Date()
@@ -168,7 +168,7 @@ export async function obtenerLecturasPorUsuario(usuario_id) {
     const [rows] = await pool.query(`
         SELECT 
             id,
-            usuario_id,
+           
             tipo,
             contenido,
             fecha_lectura

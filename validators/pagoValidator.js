@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 import { validarCampos } from "./validateResults.js";
 
-import { MONTO_MEMBRESIA_MENSUAL } from "../models/pagoModels.js";
+
 
 
 
@@ -15,13 +15,8 @@ export const validarCreacionPago=[
 
 
     body('monto')
-        .optional()
-        .custom((value) => {
-            if (value && value !== MONTO_MEMBRESIA_MENSUAL) {
-                throw new Error(`El monto debe ser ${MONTO_MEMBRESIA_MENSUAL}`);
-            }
-            return true;
-        }),
+    .notEmpty().withMessage('El monto es obligatorio')
+    .isFloat({min:0.01}).withMessage('el monto debe ser mayor a 0'),
 
     body('metodo')
     .notEmpty().withMessage(' el metodo de pago es olbigatorio')

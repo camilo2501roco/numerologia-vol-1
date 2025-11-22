@@ -1,3 +1,7 @@
+                                  
+                                  
+                                  
+                                  
                                    DOCUMENTACION DE LA API 
 
 
@@ -5,13 +9,78 @@
 
 Introduccion: 
  Esta API se basa en un sistema de servicio de numerologia, este sistema se complementa
-  de 3 estructuras : 
-  1.el registro y manejo de usuarios 
-  2.el registro y manejo de pagos para acceder al servicio de numerologia
-  3. la generacion de lecturas de numerologia ( el servicio final)
+ de 3 estructuras : 
+ 1.el registro y manejo de usuarios 
+ 2.el registro y manejo de pagos para acceder al servicio de numerologia
+ 3. la generacion de lecturas de numerologia ( el servicio final)
 
 
   
+
+
+
+El  funcionamiento de la API inicia registrando el usuario  la logica esta divida en 3
+archivos usuarioModels.js pasando a usuarioControllers.js conecta a usuarioRoutes.js 
+y se conecta  al servidor finalmente se registran usuarios y enviando Y Extrayendo  datos a la base de datos 
+la cual se conecta en dataBase.js
+
+
+
+seguido del registro se pueden manejar el buscar usuarios ya sea general o por ID 
+ 
+
+ tambien esta el manejo  de actualizar el usuario 
+
+ tambien se puede  actualizar un dato en especfico que es el estado 
+ el cual se maneja con activo o inactivo esta modficacion puede generar el acceso a lectura
+sin haberse registrado y puede bloquearla pero esta modficacion no afecta la membresia
+es decir puede generar lecturas pero no esta registrado en pago y viceversa si se modifca de activo
+a inactivo luego de haberse registrado la membresia sigue corriendo por que ya se accedio al pago
+de esta manera el Cambiar estado queda como un tipo de prueba de las lecturas.
+
+
+
+se eliminan usuarios y finalmente se completa el CRUD de usuarios para pasar 
+a pagos la segunda parte del sistema 
+
+
+Pagos  inicia creando el registro del pago el cual Y adebe existir un usuario para poder registrar pago 
+
+al momento de pasar registrar el pago se activa la membresia de ahi se crea la fecha de vencimiento
+que esta vigilada  por el  node-cron 
+que viene de verificarMembresias.js  donde esta el node-cron 
+ esta funcion se agrega en el app.js en el servidor y pasa lo siguiente, 
+
+ ....el servidor crea una alarma, esa alarma suena cada 30 minutos, cuando suena revisa
+ la tabla de pagos  y consigue la ultima fecha de vencimiento esta vencida cambia usuarios.estado a inactivo
+ y muestra un mensaje enconsola con el numero de usuarios que se actualizaron 
+
+
+luego se pueden consultar el estado de un usuario en especfico 
+aqui el estado se ve afectado solamente por el registro de pago si esta activo  se refleja activo
+
+
+
+seguido se puede accder al historial de pagos completo de todos los usuarios
+
+tambien se puede accedera ver el historial de pagos de un usuario en especfico. trae dos datos importantes aparte 
+que es los dias restantes de ese pago_membresia , y estado del pago 
+
+
+
+finalmente sigue el servicio principal de numerologia
+
+como primer servicio se genera una lectura principal la cual se genera apartir de la fecha de nacimiento
+todo este proceso de operacion para definir el numero para la lectura lo hace la api de gemini que por medio de un prompt
+toma la fecha de nacimiento y genera el numero y a su vez saca la lectura correspondiente que es el camino de vida 
+
+el segundo servicio se genera la lectura diaria donde la ia hace la operacion  numerologica y apartir de ahi devuelve 
+la lectura diaria 
+
+se pueden ver todas las lecturas generadas como un historial base y tambien buscar una lectura en especfico la cual
+se busca con el numero generado el ID de lectura correspondiente
+
+
 
   Enpoints//
 
@@ -111,7 +180,7 @@ funcionar como metodo de bloquear servicio )
 
 
 
- DELETE  http://localhost:3000/api/usuarios/25
+ --------------DELETE  http://localhost:3000/api/usuarios/25
 
 
  (como  Route Parameter debe ir el ID de usuario )
@@ -123,7 +192,7 @@ funcionar como metodo de bloquear servicio )
 PAGOS //
 
 
-POST http://localhost:3000/api/pagos :
+--------------POST http://localhost:3000/api/pagos :
 
  este endpoint funciona para registrar un  pago 
 
@@ -131,7 +200,7 @@ POST http://localhost:3000/api/pagos :
 como  Request Body : id de usuario,monto y metodo de pago 
 
 el id debe existir
-el monto son 5000 es el monto fijo que permite crear el regsitro
+el monto no tiene un numero fijo es decir a sea 5000 o 1000
 el metodo de pago debe ser tarjeta , efectivo o transferencia
 
 
@@ -141,7 +210,7 @@ ya existe un pago
 
 
 
-GET  http://localhost:3000/api/pagos/estado/25 : 
+----------GET  http://localhost:3000/api/pagos/estado/25 : 
 
 con este metodo se puede recibir una respuesta del estado del registro
 
@@ -152,7 +221,7 @@ con este metodo se puede recibir una respuesta del estado del registro
 
 
 
- GET  http://localhost:3000/api/pagos :
+ ------------GET  http://localhost:3000/api/pagos :
  
 
 
@@ -165,12 +234,84 @@ con este metodo se puede recibir una respuesta del estado del registro
 
 
 
- http://localhost:3000/api/pagos/25 : 
+ ----------  GET http://localhost:3000/api/pagos/25 : 
 
 
 con este metodo se pueden obtener los registros de pago de un usuario en especifico 
 
  (como  Route Parameter debe ir el ID de usuario )
+
+
+
+
+LECTURAS //
+
+-----------POST  http://localhost:3000/api/lecturas/principal/25 
+
+
+este metodo endpoint genera la lectura principal la cual su respuesta  200
+es un json con el contenido de lectura generado por la IA junto  a otros datos, fecha de la generacion de lectura,
+tipo de lectura, mensaje de exitosa respuesta 
+
+
+ (como  Route Parameter debe ir el ID de usuario )
+
+ si la lectura principal ya a sido generada anteriormente y el usuario intenta generar nuevamente la respuesta
+ es un error 404 indicando que la lectura principal ya fue generada.
+
+ si el usuario no tiene membresia activa no genera lectura a menos que se modifique manualmente 
+
+
+
+
+
+
+ -----  POST http://localhost:3000/api/lecturas/diaria/26
+
+
+
+este metodo endpoint genera la lectura diaria   la cual su respuesta  200
+es un json con el contenido de lectura generado por la IA junto  a otros datos, fecha de la generacion de lectura,
+tipo de lectura, mensaje de exitosa respuesta 
+
+(como  Route Parameter debe ir el ID de usuario )
+
+si el usuario no tiene membresia activa no genera lectura a menos que se modifique manualmente 
+
+
+
+
+
+-------- GET http://localhost:3000/api/lecturas/usuario/23
+
+
+Con este metodo endpoint se van a mostrar todas las lecturas generadas de un usuario en 
+especifico , 
+
+(como  Route Parameter debe ir el ID de usuario )
+
+
+como respuesta correcta se recibe los siguientes datos: usuario_id, nombre del usuario,total de lecturas, id de lectura,
+tipo de lectura,contenido y fecha de creacion de lectura
+
+
+-------------GET http://localhost:3000/api/lecturas/19
+
+
+(como  Route Parameter debe ir el ID de LECTURA )
+
+
+
+con este metodo endpoint busca una lectura en especifico que se busca de acuerdo al numero de esa lectura
+
+como respuesta tenemos:numero de lectura,usuario_id,tipo de lectura,contenido,fecha de genera de lectura,
+nombre del usuario y email de usuario
+
+
+
+
+
+
 
 
 

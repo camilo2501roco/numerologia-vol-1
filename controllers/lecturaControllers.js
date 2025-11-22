@@ -31,7 +31,7 @@ if(usuario.estado !== 'activo'){
 
 
         res.status(201).json({
-            success: true,
+           
             mensaje: 'lectura principal generada exitosamente',
             data:lectura
         });
@@ -82,7 +82,7 @@ if(usuario.estado !== 'activo'){
 const lectura = await crearLecturaDiaria(usuario_id,usuario.fecha_nacimiento);
 
 res.status(201).json({
-     success: true,
+   
             mensaje: 'Lectura diaria generada exitosamente',
             data: lectura
 });
@@ -122,7 +122,7 @@ export async function getLecturasPorUsuario(req,res) {
          const lecturas = await  obtenerLecturasPorUsuario(usuario_id);
 
             res.json({
-            success: true,
+            
             usuario_id: parseInt(usuario_id),
             nombre: usuario.nombre,
             total_lecturas: lecturas.length,
@@ -153,7 +153,7 @@ export async function getLectura(req,res) {
         }
 
         res.json({
-             success: true,
+             
             data: lectura
         })
         

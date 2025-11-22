@@ -3,7 +3,7 @@ import 'dotenv/config'
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import pagoRoutes from './routes/pagoRoutes.js'
 import lecturaRoutes from './routes/lecturaRoutes.js';
-import { iniciarTareaVerificacionMembresias } from './cron/verificiarMembresias.js';
+import { iniciarTareaVerificacionMembresias } from './cron/verificarMembresias.js';
 
 const app = express();
 

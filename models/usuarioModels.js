@@ -1,6 +1,6 @@
 
 
-import pool from '../config/database.js';
+import pool from '../config/dataBase.js';
 
 
 
