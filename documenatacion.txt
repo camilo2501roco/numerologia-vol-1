@@ -24,7 +24,7 @@ app.js                → Archivo principal que inicia el servidor
 dataBase.sql          → Script con las tablas
 
 
-app.js carga rutas, middlewares y arranca el servidor.
+app.js carga rutas  y arranca el servidor.
 
 cron/verificarMembresias.js revisa cada cierto tiempo qué usuarios deben pasar a inactivo.
 
