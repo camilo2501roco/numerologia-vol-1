@@ -92,26 +92,29 @@ export async function getAllPagos(req,res) {
 
 
 
-
-export async function getPagosPorUsuario(req,res) {
-    
-
+export async function getPagosPorUsuario(req, res) {
     try {
-        const {usuario_id} = req.params;
+        const { usuario_id } = req.params;
 
-        const usuario = await obtenerpagosPorUsuario(usuario_id);
-        if(!usuario)return res.status(404).json({error:'usuario no encontrado'});
+       
+        const usuario = await obtenerUsuarioPorId(usuario_id);
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
 
+       
         const pagos = await obtenerpagosPorUsuario(usuario_id);
+        
         res.json({
             succes: true,
-            usuario_id:parseInt(usuario_id),
-            nombre:usuario.nombre,
+            usuario_id: parseInt(usuario_id),
+            nombre: usuario.nombre,
             total_pagos: pagos.length,
             data: pagos
-        })
+        });
+        
     } catch (error) { 
-         console.error('Error al obtener pagos del usuario:', error.message);
+        console.error('Error al obtener pagos del usuario:', error.message);
         res.status(500).json({ 
             error: 'Error al obtener pagos del usuario',
             mensajeTecnico: error.message

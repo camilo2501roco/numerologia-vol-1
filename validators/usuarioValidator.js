@@ -32,27 +32,31 @@ body('fecha_nacimiento')
 
 
 
-export const  validarActualizacionUsuario= [
-body('nombre')
-  .optional()  
-  .isLength({min: 3}).withMessage('El nombre debe tener al menos 3 caracteres'),
+export const validarActualizacionUsuario = [
+  body('nombre')
+    .optional()  
+    .isLength({min: 3}).withMessage('El nombre debe tener al menos 3 caracteres'),
 
-body('email')
-  .optional() 
-  .isEmail().withMessage('Debe ser un email válido')
-  .custom(async (email, {req}) => {
-    const existe = await existeEmail(email, req.params.id);
-    if (existe) {
-      throw new Error('El email ya está registrado');
-    }
-  }),
+  body('email')
+    .optional() 
+    .isEmail().withMessage('Debe ser un email válido')
+    .custom(async (email, {req}) => {
+      const existe = await existeEmail(email, req.params.id);
+      if (existe) {
+        throw new Error('El email ya está registrado');
+      }
+    }),
 
-body('fecha_nacimiento')
-  .optional()  
-  .isDate().withMessage('Debe ser una fecha válida (YYYY-MM-DD)'),
+  body('fecha_nacimiento')
+    .optional()
+    // ✅ Mismo formato que en POST
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('La fecha debe tener el formato YYYY-MM-DD (ejemplo: 1990-05-15)')
+    .isDate({ format: 'YYYY-MM-DD' })  // ✅ Ahora sí con formato específico
+    .withMessage('Debe ser una fecha válida'),
 
-    validarCampos 
-]
+  validarCampos 
+];
 
 
 export const validarCambioEstado =[

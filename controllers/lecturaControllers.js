@@ -38,7 +38,7 @@ if(usuario.estado !== 'activo'){
     } catch (error) {
         console.error('Error al generar lectura principal:', error.message);
         
-       if (error instanceof LecturaYaExisteError) {  // ✅
+       if (error instanceof LecturaYaExisteError) {  
             return res.status(409).json({
                 error: 'Lectura ya existe',
                 mensaje: error.message
