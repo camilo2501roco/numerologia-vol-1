@@ -13,7 +13,7 @@ Guardar todas las lecturas en la base de datos.
 
 Solo los usuarios activos pueden obtener lecturas diarias.
 
- 2. Cómo está organizado el proyecto (tu estructura real)
+ 2. Cómo está organizado el proyecto 
 config/               → Conexión a la base de datos
 controllers/          → Lógica de cada endpoint
 cron/                 → Tarea automática para vencer membresías

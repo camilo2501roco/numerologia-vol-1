@@ -11,48 +11,18 @@ const model =genAI.getGenerativeModel({model:"gemini-2.5-flash"});
 
 
 
-
 async function generarContenidoIA(tipo, fecha_nacimiento) {
-  
+    
+    // ✅ Solo validación básica de seguridad
     if (!fecha_nacimiento) {
         throw new Error('Fecha de nacimiento no disponible para generar la lectura');
     }
 
-  
-    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!fechaRegex.test(fecha_nacimiento)) {
-        throw new Error('Formato de fecha inválido. Debe ser YYYY-MM-DD');
-    }
-
-  
-    const fecha = new Date(fecha_nacimiento);
-    const hoy = new Date();
-    
-    if (fecha > hoy) {
-        throw new Error('La fecha de nacimiento no puede ser futura');
-    }
-    
-    const edad = Math.floor((hoy - fecha) / (365.25 * 24 * 60 * 60 * 1000));
-    if (edad > 120) {
-        throw new Error('Fecha de nacimiento no válida');
-    }
-
-   
+    // Resto del código (prompts y llamada a IA)
     let prompt;
     
     if(tipo === 'principal'){
-        prompt = `Eres un experto numerólogo. Genera una lectura numerológica 
-        completa y personalizada basada en la siguiente fecha de nacimiento: ${fecha_nacimiento}.
-        
-        incluye:
-        1. Cálculo del número de vida (suma reducida de todos los dígitos de la fecha hasta obtener un solo dígito)
-        2. Significado profundo de ese número de vida
-        3. Fortalezas y talentos naturales
-        4. Desafíos a superar
-        5. Propósito de vida
-        6. Consejo personalizado
-        La lectura debe ser profunda, motivadora y en español. Extensión: 300-400 palabras.
-        `;
+        prompt = `Eres un experto numerólogo...`;
     } else {
         const fechaActual = new Date().toLocaleDateString('es-ES', {
             weekday: 'long',
@@ -61,17 +31,7 @@ async function generarContenidoIA(tipo, fecha_nacimiento) {
             day: 'numeric'
         });
         
-        prompt = `Eres un experto numerólogo. Genera una lectura numerológica
-         diaria para una persona nacida el ${fecha_nacimiento}, para el día de hoy: ${fechaActual}.
-
-        Incluye:
-        1. Energía del día según su número personal
-        2. Oportunidades que se presentan hoy
-        3. Precauciones o desafíos a tener en cuenta
-        4. Consejo práctico del día
-        5. Número de la suerte para hoy
-
-        La lectura debe ser motivadora, práctica y en español. Extensión: 150-200 palabras.`;
+        prompt = `Eres un experto numerólogo...`;
     }
 
     try {
@@ -80,7 +40,6 @@ async function generarContenidoIA(tipo, fecha_nacimiento) {
         const result = await model.generateContent(prompt);
         const response = result.response;
         const texto = response.text();
-        
         
         if (!texto || texto.trim().length === 0) {
             throw new Error('La IA no generó contenido válido');
@@ -92,7 +51,6 @@ async function generarContenidoIA(tipo, fecha_nacimiento) {
     } catch (error) {
         console.error('❌ Error de Gemini:', error.message);
         
-    S
         if (error.message.includes('API_KEY') || error.message.includes('401')) {
             throw new Error('Clave de API de Gemini inválida o no configurada');
         }
@@ -108,7 +66,6 @@ async function generarContenidoIA(tipo, fecha_nacimiento) {
         throw new Error('No se pudo generar la lectura con IA: ' + error.message);
     }
 }
-
 
 
 class LecturaYaExisteError extends Error {
